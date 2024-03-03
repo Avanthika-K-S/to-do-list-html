@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        #app {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .columns {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .column {
+            flex: 0 0 48%;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 0 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 8px 0;
+            padding: 12px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            background-color: #fff;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            background-color: #d3ffd3;
+        }
+
+        button {
+            margin-left: 8px;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        input[type="text"], input[type="date"] {
+            padding: 8px;
+            margin-right: 8px;
+        }
+
+        .due-date {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .edit-input {
+            width: 60%;
+            padding: 8px;
+            margin-right: 8px;
+        }
+
+        .edit-actions {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="header">
+            <h1>ToDo List</h1>
+            <input type="text" id="taskInput" placeholder="Add a new task">
+            <input type="date" id="dueDateInput">
+            <button id="addButton">Add Task</button>
+        </div>
+        <div class="columns">
+            <div class="column" id="todoColumn">
+                <h2>Todo</h2>
+                <ul id="todoList" class="task-list"></ul>
+            </div>
+            <div class="column" id="completedColumn">
+                <h2>Completed</h2>
+                <ul id="completedList" class="task-list"></ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const taskInput = document.getElementById('taskInput');
+            const dueDateInput = document.getElementById('dueDateInput');
+            const addButton = document.getElementById('addButton');
+            const todoList = document.getElementById('todoList');
+            const completedList = document.getElementById('completedList');
+
+            addButton.addEventListener('click', addTask);
+
+            function addTask() {
+                const taskText = taskInput.value.trim();
+                const dueDate = dueDateInput.value;
+
+                if (taskText !== '') {
+                    const taskElement = createTaskElement(taskText, dueDate);
+                    todoList.appendChild(taskElement);
+                    taskInput.value = '';
+                    dueDateInput.value = '';
+                }
+            }
+
+            function createTaskElement(taskText, dueDate) {
+                const taskElement = document.createElement('li');
+                taskElement.textContent = taskText;
+
+                if (dueDate) {
+                    const dueDateSpan = document.createElement('span');
+                    dueDateSpan.textContent = dueDate;
+                    dueDateSpan.className = 'due-date';
+                    taskElement.appendChild(dueDateSpan);
+                }
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'edit-actions';
+
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.addEventListener('click', function () {
+                    const editInput = document.createElement('input');
+                    editInput.type = 'text';
+                    editInput.className = 'edit-input';
+                    editInput.value = taskElement.textContent;
+                    
+                    const saveButton = document.createElement('button');
+                    saveButton.textContent = 'Save';
+                    saveButton.addEventListener('click', function () {
+                        taskElement.textContent = editInput.value;
+                        actionsDiv.removeChild(editInput);
+                        actionsDiv.removeChild(saveButton);
+                    });
+
+                    actionsDiv.appendChild(editInput);
+                    actionsDiv.appendChild(saveButton);
+                });
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', function () {
+                    taskElement.remove();
+                });
+
+                taskElement.appendChild(actionsDiv);
+                actionsDiv.appendChild(editButton);
+                actionsDiv.appendChild(deleteButton);
+
+                taskElement.addEventListener('click', function () {
+                    taskElement.classList.toggle('completed');
+
+                    // Move task to completed column
+                    if (taskElement.classList.contains('completed')) {
+                        completedList.appendChild(taskElement);
+                    } else {
+                        todoList.appendChild(taskElement);
+                    }
+                });
+
+                return taskElement;
+            }
+        });
+    </script>
+</body>
+</html>
