@@ -9,58 +9,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function addTask() {
         const taskText = taskInput.value.trim();
+        const dueDate = dueDateInput.value;
 
         if (taskText !== '') {
-            const taskElement = createTaskElement(taskText);
-
+            const taskElement = createTaskElement(taskText, dueDate);
             todoList.appendChild(taskElement);
             taskInput.value = '';
+            dueDateInput.value = '';
         }
     }
 
-    function createTaskElement(taskText) {
+    function createTaskElement(taskText, dueDate) {
         const taskElement = document.createElement('li');
-        taskElement.textContent = taskText;
+
+        const textSpan = document.createElement('span');
+        textSpan.textContent = taskText;
+
+        if (dueDate) {
+            const dateSpan = document.createElement('span');
+            dateSpan.textContent = ` (Due: ${dueDate})`;
+            dateSpan.classList.add('due-date');
+            textSpan.appendChild(dateSpan);
+        }
+
+        taskElement.appendChild(textSpan);
 
         taskElement.addEventListener('click', function () {
             taskElement.classList.toggle('completed');
 
-            // Move task to completed column
             if (taskElement.classList.contains('completed')) {
                 completedList.appendChild(taskElement);
             } else {
                 todoList.appendChild(taskElement);
             }
         });
-        function createTaskElement(taskText, dueDate) {
-    const taskElement = document.createElement('li');
-    
-    const textSpan = document.createElement('span');
-    textSpan.textContent = taskText;
 
-    if (dueDate) {
-        const dateSpan = document.createElement('span');
-        dateSpan.textContent = ` (Due: ${dueDate})`;
-        dateSpan.classList.add('due-date');
-        textSpan.appendChild(dateSpan);
-    }
-
-    taskElement.appendChild(textSpan);
-
-}
-
-    const dueDate = dueDateInput.value;
-
-          if (taskText !== '') {
-    const taskElement = createTaskElement(taskText, dueDate);
-    todoList.appendChild(taskElement);
-    taskInput.value = '';
-    dueDateInput.value = ''; // clear date
-}
-
+       
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', function () {
+        deleteButton.addEventListener('click', function (event) {
+            event.stopPropagation(); 
             taskElement.remove();
         });
 
