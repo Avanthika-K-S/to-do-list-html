@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const addButton = document.getElementById('addButton');
     const todoList = document.getElementById('todoList');
     const completedList = document.getElementById('completedList');
+    const dueDateInput = document.getElementById('dueDateInput');
 
     addButton.addEventListener('click', addTask);
 
@@ -31,6 +32,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 todoList.appendChild(taskElement);
             }
         });
+        function createTaskElement(taskText, dueDate) {
+    const taskElement = document.createElement('li');
+    
+    const textSpan = document.createElement('span');
+    textSpan.textContent = taskText;
+
+    if (dueDate) {
+        const dateSpan = document.createElement('span');
+        dateSpan.textContent = ` (Due: ${dueDate})`;
+        dateSpan.classList.add('due-date');
+        textSpan.appendChild(dateSpan);
+    }
+
+    taskElement.appendChild(textSpan);
+
+}
+
+    const dueDate = dueDateInput.value;
+
+          if (taskText !== '') {
+    const taskElement = createTaskElement(taskText, dueDate);
+    todoList.appendChild(taskElement);
+    taskInput.value = '';
+    dueDateInput.value = ''; // clear date
+}
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
